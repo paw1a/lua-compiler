@@ -3,10 +3,27 @@
 
 #include <stdlib.h>
 
+typedef enum {
+    TOKEN_STATE_START,
+    TOKEN_STATE_SAW_ASSIGN,
+    TOKEN_STATE_SAW_TILDA,
+    TOKEN_STATE_SAW_LESS,
+    TOKEN_STATE_SAW_GREATER,
+    TOKEN_STATE_SAW_COLON,
+    TOKEN_STATE_SAW_DOT,
+    TOKEN_STATE_SAW_DOT_DOT,
+    TOKEN_STATE_SAW_SLASH,
+    TOKEN_STATE_ALPHA,
+    TOKEN_STATE_NUMBER,
+    TOKEN_STATE_NUMBER_DOT
+} lua_token_state;
+
 typedef struct {
+    lua_token_state state;
     char *start;
     char *current;
     int line;
+    int column;
 } lua_lexer;
 
 void initialize_lexer(lua_lexer *lexer, char *source);
@@ -43,8 +60,82 @@ typedef struct {
     const char *start;
     size_t len;
     int line;
+    int column;
 } lua_token;
 
 lua_token next_token(lua_lexer *lexer);
+
+#define LEXER_ALPHA \
+         '_': \
+    case 'a': \
+    case 'b': \
+    case 'c': \
+    case 'd': \
+    case 'e': \
+    case 'f': \
+    case 'g': \
+    case 'h': \
+    case 'i': \
+    case 'j': \
+    case 'k': \
+    case 'l': \
+    case 'm': \
+    case 'n': \
+    case 'o': \
+    case 'p': \
+    case 'q': \
+    case 'r': \
+    case 's': \
+    case 't': \
+    case 'u': \
+    case 'v': \
+    case 'w': \
+    case 'x': \
+    case 'y': \
+    case 'z': \
+    case 'A': \
+    case 'B': \
+    case 'C': \
+    case 'D': \
+    case 'E': \
+    case 'F': \
+    case 'G': \
+    case 'H': \
+    case 'I': \
+    case 'J': \
+    case 'K': \
+    case 'L': \
+    case 'M': \
+    case 'N': \
+    case 'O': \
+    case 'P': \
+    case 'Q': \
+    case 'R': \
+    case 'S': \
+    case 'T': \
+    case 'U': \
+    case 'V': \
+    case 'W': \
+    case 'X': \
+    case 'Y': \
+    case 'Z'
+
+#define LEXER_DIGIT \
+         '0': \
+    case '1': \
+    case '2': \
+    case '3': \
+    case '4': \
+    case '5': \
+    case '6': \
+    case '7': \
+    case '8': \
+    case '9'
+
+#define WHITESPACE \
+         ' ': \
+    case '\n' \
+    case '\t' \
+    case '\r'
 
 #endif
