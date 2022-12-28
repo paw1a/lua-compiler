@@ -1,0 +1,8 @@
+*.exe
+*.out
+*.o
+*.d
+*.pch
+*.gch
+.idea
+**/.DS_Store
