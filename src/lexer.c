@@ -98,11 +98,41 @@ lua_token next_token(lua_lexer *lexer) {
                         begin_token(lexer, &token, TOKEN_PIPE);
                         lexer->state = TOKEN_STATE_START;
                         break;
+                    case '=':
+                        begin_token(lexer, &token, TOKEN_ASSIGN);
+                        lexer->state = TOKEN_STATE_SAW_ASSIGN;
+                        break;
+                    case '~':
+                        begin_token(lexer, &token, TOKEN_TILDE);
+                        lexer->state = TOKEN_STATE_SAW_TILDE;
+                        break;
+                    case '<':
+                        begin_token(lexer, &token, TOKEN_LESS);
+                        lexer->state = TOKEN_STATE_SAW_LESS;
+                        break;
+                    case '>':
+                        begin_token(lexer, &token, TOKEN_GREATER);
+                        lexer->state = TOKEN_STATE_SAW_GREATER;
+                        break;
+                    case ':':
+                        begin_token(lexer, &token, TOKEN_COLON);
+                        lexer->state = TOKEN_STATE_SAW_COLON;
+                        break;
+                    case '.':
+                        begin_token(lexer, &token, TOKEN_DOT);
+                        lexer->state = TOKEN_STATE_SAW_DOT;
+                        break;
+                    case '/':
+                        begin_token(lexer, &token, TOKEN_SLASH);
+                        lexer->state = TOKEN_STATE_SAW_SLASH;
+                        break;
                     case LEXER_ALPHA:
                         begin_token(lexer, &token, TOKEN_IDENTIFIER);
                         lexer->state = TOKEN_STATE_ALPHA;
                         break;
                     case LEXER_DIGIT:
+                        begin_token(lexer, &token, TOKEN_NUMBER);
+                        lexer->state = TOKEN_STATE_NUMBER;
                         break;
                     default:
                         break;
@@ -110,7 +140,7 @@ lua_token next_token(lua_lexer *lexer) {
                 break;
             case TOKEN_STATE_SAW_ASSIGN:
                 break;
-            case TOKEN_STATE_SAW_TILDA:
+            case TOKEN_STATE_SAW_TILDE:
                 break;
             case TOKEN_STATE_SAW_LESS:
                 break;
