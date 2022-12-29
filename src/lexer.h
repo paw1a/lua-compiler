@@ -2,20 +2,25 @@
 #define LEXER_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef enum {
-    TOKEN_STATE_START,
-    TOKEN_STATE_SAW_ASSIGN,
-    TOKEN_STATE_SAW_TILDE,
-    TOKEN_STATE_SAW_LESS,
-    TOKEN_STATE_SAW_GREATER,
-    TOKEN_STATE_SAW_COLON,
-    TOKEN_STATE_SAW_DOT,
-    TOKEN_STATE_SAW_DOT_DOT,
-    TOKEN_STATE_SAW_SLASH,
-    TOKEN_STATE_ALPHA,
-    TOKEN_STATE_NUMBER,
-    TOKEN_STATE_NUMBER_DOT
+    LEXER_STATE_START,
+    LEXER_STATE_SAW_ASSIGN,
+    LEXER_STATE_SAW_TILDE,
+    LEXER_STATE_SAW_LESS,
+    LEXER_STATE_SAW_GREATER,
+    LEXER_STATE_SAW_COLON,
+    LEXER_STATE_SAW_DOT,
+    LEXER_STATE_SAW_DOT_DOT,
+    LEXER_STATE_SAW_SLASH,
+    LEXER_STATE_ALPHA,
+    LEXER_STATE_NUMBER,
+    LEXER_STATE_NUMBER_DOT,
+    LEXER_STATE_SINGLE_QUOTED_STRING,
+    LEXER_STATE_DOUBLE_QUOTED_STRING,
+    LEXER_STATE_ERROR,
+    LEXER_STATE_FINISH
 } lua_token_state;
 
 typedef struct {
@@ -64,6 +69,11 @@ typedef struct {
 } lua_token;
 
 lua_token next_token(lua_lexer *lexer);
+
+typedef struct {
+    const char *keyword;
+    lua_token_type token_type;
+} lua_keyword;
 
 #define LEXER_ALPHA \
          '_': \
@@ -133,9 +143,9 @@ lua_token next_token(lua_lexer *lexer);
     case '9'
 
 #define WHITESPACE \
-         ' ': \
-    case '\n' \
-    case '\t' \
+          ' ':  \
+    case '\n': \
+    case '\t': \
     case '\r'
 
 #endif
