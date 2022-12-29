@@ -19,7 +19,7 @@ static void error_token(lua_lexer *lexer, lua_token *token, const char *message)
     token->column = lexer->column;
 }
 
-static void begin_token(lua_lexer *lexer, lua_token *token, lua_token_type type) {
+static void create_token(lua_lexer *lexer, lua_token *token, lua_token_type type) {
     token->type = type;
     token->start = lexer->current;
     token->len = 0;
@@ -71,111 +71,111 @@ lua_token next_token(lua_lexer *lexer) {
             case LEXER_STATE_START:
                 switch (c) {
                     case '+':
-                        begin_token(lexer, &token, TOKEN_PLUS);
-                        lexer->state = LEXER_STATE_FINISH;
-                        break;
-                    case '-':
-                        begin_token(lexer, &token, TOKEN_MINUS);
+                        create_token(lexer, &token, TOKEN_PLUS);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '*':
-                        begin_token(lexer, &token, TOKEN_STAR);
+                        create_token(lexer, &token, TOKEN_STAR);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '%':
-                        begin_token(lexer, &token, TOKEN_PERCENT);
+                        create_token(lexer, &token, TOKEN_PERCENT);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '^':
-                        begin_token(lexer, &token, TOKEN_EXP);
+                        create_token(lexer, &token, TOKEN_EXP);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '#':
-                        begin_token(lexer, &token, TOKEN_HASH);
+                        create_token(lexer, &token, TOKEN_HASH);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '(':
-                        begin_token(lexer, &token, TOKEN_LEFT_PAREN);
+                        create_token(lexer, &token, TOKEN_LEFT_PAREN);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case ')':
-                        begin_token(lexer, &token, TOKEN_RIGHT_PAREN);
+                        create_token(lexer, &token, TOKEN_RIGHT_PAREN);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '{':
-                        begin_token(lexer, &token, TOKEN_LEFT_BRACE);
+                        create_token(lexer, &token, TOKEN_LEFT_BRACE);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '}':
-                        begin_token(lexer, &token, TOKEN_RIGHT_BRACE);
+                        create_token(lexer, &token, TOKEN_RIGHT_BRACE);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '[':
-                        begin_token(lexer, &token, TOKEN_LEFT_BRACKET);
+                        create_token(lexer, &token, TOKEN_LEFT_BRACKET);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case ']':
-                        begin_token(lexer, &token, TOKEN_RIGHT_BRACKET);
+                        create_token(lexer, &token, TOKEN_RIGHT_BRACKET);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case ';':
-                        begin_token(lexer, &token, TOKEN_SEMICOLON);
+                        create_token(lexer, &token, TOKEN_SEMICOLON);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case ',':
-                        begin_token(lexer, &token, TOKEN_COMMA);
+                        create_token(lexer, &token, TOKEN_COMMA);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '&':
-                        begin_token(lexer, &token, TOKEN_AMPERSAND);
+                        create_token(lexer, &token, TOKEN_AMPERSAND);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '|':
-                        begin_token(lexer, &token, TOKEN_PIPE);
+                        create_token(lexer, &token, TOKEN_PIPE);
                         lexer->state = LEXER_STATE_FINISH;
                         break;
                     case '=':
-                        begin_token(lexer, &token, TOKEN_ASSIGN);
+                        create_token(lexer, &token, TOKEN_ASSIGN);
                         lexer->state = LEXER_STATE_SAW_ASSIGN;
                         break;
+                    case '-':
+                        create_token(lexer, &token, TOKEN_MINUS);
+                        lexer->state = LEXER_STATE_SAW_MINUS;
+                        break;
                     case '~':
-                        begin_token(lexer, &token, TOKEN_TILDE);
+                        create_token(lexer, &token, TOKEN_TILDE);
                         lexer->state = LEXER_STATE_SAW_TILDE;
                         break;
                     case '<':
-                        begin_token(lexer, &token, TOKEN_LESS);
+                        create_token(lexer, &token, TOKEN_LESS);
                         lexer->state = LEXER_STATE_SAW_LESS;
                         break;
                     case '>':
-                        begin_token(lexer, &token, TOKEN_GREATER);
+                        create_token(lexer, &token, TOKEN_GREATER);
                         lexer->state = LEXER_STATE_SAW_GREATER;
                         break;
                     case ':':
-                        begin_token(lexer, &token, TOKEN_COLON);
+                        create_token(lexer, &token, TOKEN_COLON);
                         lexer->state = LEXER_STATE_SAW_COLON;
                         break;
                     case '.':
-                        begin_token(lexer, &token, TOKEN_DOT);
+                        create_token(lexer, &token, TOKEN_DOT);
                         lexer->state = LEXER_STATE_SAW_DOT;
                         break;
                     case '/':
-                        begin_token(lexer, &token, TOKEN_SLASH);
+                        create_token(lexer, &token, TOKEN_SLASH);
                         lexer->state = LEXER_STATE_SAW_SLASH;
                         break;
                     case '\'':
-                        begin_token(lexer, &token, TOKEN_STRING);
+                        create_token(lexer, &token, TOKEN_STRING);
                         lexer->state = LEXER_STATE_SINGLE_QUOTED_STRING;
                         break;
                     case '\"':
-                        begin_token(lexer, &token, TOKEN_STRING);
+                        create_token(lexer, &token, TOKEN_STRING);
                         lexer->state = LEXER_STATE_DOUBLE_QUOTED_STRING;
                         break;
                     case LEXER_ALPHA:
-                        begin_token(lexer, &token, TOKEN_IDENTIFIER);
+                        create_token(lexer, &token, TOKEN_IDENTIFIER);
                         lexer->state = LEXER_STATE_ALPHA;
                         break;
                     case LEXER_DIGIT:
-                        begin_token(lexer, &token, TOKEN_NUMBER);
+                        create_token(lexer, &token, TOKEN_NUMBER);
                         lexer->state = LEXER_STATE_NUMBER;
                         break;
                     case WHITESPACE:
@@ -194,6 +194,26 @@ lua_token next_token(lua_lexer *lexer) {
                         break;
                     default:
                         lexer->current--;
+                        break;
+                }
+                break;
+            case LEXER_STATE_SAW_MINUS:
+                switch (c) {
+                    case '-':
+                        lexer->state = LEXER_STATE_COMMENT;
+                        break;
+                    default:
+                        lexer->state = LEXER_STATE_FINISH;
+                        lexer->current--;
+                        break;
+                }
+                break;
+            case LEXER_STATE_COMMENT:
+                switch (c) {
+                    case '\n':
+                        lexer->state = LEXER_STATE_START;
+                        break;
+                    default:
                         break;
                 }
                 break;
@@ -343,8 +363,9 @@ lua_token next_token(lua_lexer *lexer) {
     }
 
     switch (lexer->state) {
+        case LEXER_STATE_COMMENT:
         case LEXER_STATE_START:
-            begin_token(lexer, &token, TOKEN_EOF);
+            create_token(lexer, &token, TOKEN_EOF);
             break;
         case LEXER_STATE_DOUBLE_QUOTED_STRING:
         case LEXER_STATE_SINGLE_QUOTED_STRING:

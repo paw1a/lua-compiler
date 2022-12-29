@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
         }
         printf("%2d '%.*s'\n", token.type, (int)token.len, token.start);
 
-        if (token.type == TOKEN_EOF || token.type == TOKEN_ERROR)
+        if (token.type == TOKEN_EOF)
             break;
     }
 
