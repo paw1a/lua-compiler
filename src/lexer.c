@@ -234,6 +234,9 @@ lua_token next_token(lua_lexer *lexer) {
                     case '=':
                         token.type = TOKEN_LESS_EQUAL;
                         break;
+                    case '<':
+                        token.type = TOKEN_SHIFT_LEFT;
+                        break;
                     default:
                         lexer->current--;
                         break;
@@ -244,6 +247,9 @@ lua_token next_token(lua_lexer *lexer) {
                 switch (c) {
                     case '=':
                         token.type = TOKEN_GREATER_EQUAL;
+                        break;
+                    case '>':
+                        token.type = TOKEN_SHIFT_RIGHT;
                         break;
                     default:
                         lexer->current--;

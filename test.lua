@@ -1,10 +1,12 @@
-1 + 2
-"hello world"
+1 + 2;
+str = "hello world";
 
 -- one line comment
 
 if (a == 2) {
-    return 12;
+    return 12.5;
 }
 
-a = a + 1
+2 >> 10;
+
+a = a + 1;
