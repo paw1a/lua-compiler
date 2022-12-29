@@ -15,7 +15,7 @@ static char *read_file(const char *filename) {
         return NULL;
     }
 
-    int size = ftell(file);
+    long size = ftell(file);
     if (size < 0) {
         fclose(file);
         return NULL;
@@ -29,11 +29,7 @@ static char *read_file(const char *filename) {
         return NULL;
     }
 
-    if (fread(buffer, size, 1, file) != 1) {
-        free(buffer);
-        fclose(file);
-        return NULL;
-    }
+    fread(buffer, size, 1, file);
     buffer[size] = '\0';
 
     fclose(file);
@@ -51,20 +47,21 @@ int main(int argc, char **argv) {
         return 1;
 
     lua_lexer lexer;
-    initialize_lexer(&lexer);
+    initialize_lexer(&lexer, source);
 
     int line = -1;
     for (;;) {
         lua_token token = next_token(&lexer);
         if (token.line != line) {
-            printf("%4d ", token.line);
+            printf("%4d ", token.line + 1);
             line = token.line;
         } else {
             printf("   | ");
         }
-        printf("%2d '%.*s'\n", token.type, token.length, token.start);
+        printf("%2d '%.*s'\n", token.type, (int)token.len, token.start);
 
-        if (token.type == TOKEN_EOF) break;
+        if (token.type == TOKEN_EOF || token.type == TOKEN_ERROR)
+            break;
     }
 
     free(source);

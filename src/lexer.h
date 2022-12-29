@@ -21,10 +21,10 @@ typedef enum {
     LEXER_STATE_DOUBLE_QUOTED_STRING,
     LEXER_STATE_ERROR,
     LEXER_STATE_FINISH
-} lua_token_state;
+} lua_lexer_state;
 
 typedef struct {
-    lua_token_state state;
+    lua_lexer_state state;
     char *start;
     char *current;
     int line;

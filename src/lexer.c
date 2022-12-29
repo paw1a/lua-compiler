@@ -1,6 +1,7 @@
 #include "lexer.h"
 
 #include <string.h>
+#include <stdio.h>
 
 void initialize_lexer(lua_lexer *lexer, char *source) {
     lexer->state = LEXER_STATE_START;
@@ -62,8 +63,9 @@ static lua_token_type get_identifier_type(const char *identifier, size_t len) {
 
 lua_token next_token(lua_lexer *lexer) {
     lua_token token = { 0 };
+    lexer->state = LEXER_STATE_START;
 
-    for (;;) {
+    while (*lexer->current) {
         char c = *lexer->current;
         switch (lexer->state) {
             case LEXER_STATE_START:
@@ -168,10 +170,6 @@ lua_token next_token(lua_lexer *lexer) {
                         begin_token(lexer, &token, TOKEN_STRING);
                         lexer->state = LEXER_STATE_DOUBLE_QUOTED_STRING;
                         break;
-                    case '\0':
-                        begin_token(lexer, &token, TOKEN_EOF);
-                        lexer->state = LEXER_STATE_FINISH;
-                        break;
                     case LEXER_ALPHA:
                         begin_token(lexer, &token, TOKEN_IDENTIFIER);
                         lexer->state = LEXER_STATE_ALPHA;
@@ -219,7 +217,7 @@ lua_token next_token(lua_lexer *lexer) {
                     case LEXER_ALPHA:
                         break;
                     default:
-                        token.type = get_identifier_type(token.start, token.len);
+                        token.type = get_identifier_type(token.start, lexer->current - token.start);
                         lexer->current--;
                         lexer->state = LEXER_STATE_FINISH;
                         break;
@@ -264,8 +262,50 @@ lua_token next_token(lua_lexer *lexer) {
                 break;
             case LEXER_STATE_ERROR:
                 break;
-            case LEXER_STATE_FINISH:
-                return token;
+        }
+
+        lexer->current++;
+        if (lexer->state == LEXER_STATE_FINISH) {
+            token.len = lexer->current - token.start;
+            return token;
+        }
+
+        if (c == '\n') {
+            lexer->line++;
+            lexer->column = 0;
+        } else {
+            lexer->column++;
         }
     }
+
+    switch (lexer->state) {
+        case LEXER_STATE_START:
+            begin_token(lexer, &token, TOKEN_EOF);
+            break;
+        case LEXER_STATE_DOUBLE_QUOTED_STRING:
+        case LEXER_STATE_SINGLE_QUOTED_STRING:
+            error_token(lexer, &token, "unterminated string");
+            break;
+        case LEXER_STATE_SAW_ASSIGN:
+        case LEXER_STATE_SAW_TILDE:
+        case LEXER_STATE_SAW_LESS:
+        case LEXER_STATE_SAW_GREATER:
+        case LEXER_STATE_SAW_COLON:
+        case LEXER_STATE_SAW_DOT:
+        case LEXER_STATE_SAW_DOT_DOT:
+        case LEXER_STATE_SAW_SLASH:
+        case LEXER_STATE_NUMBER:
+        case LEXER_STATE_NUMBER_DOT:
+            token.len = lexer->current - token.start;
+            break;
+        case LEXER_STATE_ALPHA:
+            token.type = get_identifier_type(token.start, lexer->current - token.start);
+            token.len = lexer->current - token.start;
+            break;
+        case LEXER_STATE_ERROR:
+        case LEXER_STATE_FINISH:
+            break;
+    }
+
+    return token;
 }
