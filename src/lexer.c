@@ -198,18 +198,82 @@ lua_token next_token(lua_lexer *lexer) {
                 }
                 break;
             case LEXER_STATE_SAW_TILDE:
+                lexer->state = LEXER_STATE_FINISH;
+                switch (c) {
+                    case '=':
+                        token.type = TOKEN_NOT_EQUAL;
+                        break;
+                    default:
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_SAW_LESS:
+                lexer->state = LEXER_STATE_FINISH;
+                switch (c) {
+                    case '=':
+                        token.type = TOKEN_LESS_EQUAL;
+                        break;
+                    default:
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_SAW_GREATER:
+                lexer->state = LEXER_STATE_FINISH;
+                switch (c) {
+                    case '=':
+                        token.type = TOKEN_GREATER_EQUAL;
+                        break;
+                    default:
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_SAW_COLON:
+                lexer->state = LEXER_STATE_FINISH;
+                switch (c) {
+                    case ':':
+                        token.type = TOKEN_DOUBLE_COLON;
+                        break;
+                    default:
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_SAW_DOT:
+                switch (c) {
+                    case '.':
+                        lexer->state = LEXER_STATE_SAW_DOT_DOT;
+                        token.type = TOKEN_DOUBLE_DOT;
+                        break;
+                    default:
+                        lexer->state = LEXER_STATE_FINISH;
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_SAW_DOT_DOT:
+                lexer->state = LEXER_STATE_FINISH;
+                switch (c) {
+                    case '.':
+                        token.type = TOKEN_TRIPLE_DOT;
+                        break;
+                    default:
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_SAW_SLASH:
+                lexer->state = LEXER_STATE_FINISH;
+                switch (c) {
+                    case '/':
+                        token.type = TOKEN_DOUBLE_SLASH;
+                        break;
+                    default:
+                        lexer->current--;
+                        break;
+                }
                 break;
             case LEXER_STATE_ALPHA:
                 switch (c) {
