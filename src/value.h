@@ -22,4 +22,6 @@ typedef struct {
     lua_value value;
 } lua_object;
 
+void lua_print_object(lua_object obj);
+
 #endif

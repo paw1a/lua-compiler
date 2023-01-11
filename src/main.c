@@ -3,6 +3,7 @@
 #include "memory.h"
 #include "bytecode.h"
 #include "debug.h"
+#include "value.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,8 +48,17 @@ int main(int argc, char **argv) {
     lua_bytecode bytecode;
     lua_init_bytecode(&bytecode);
 
-    lua_add_opcode(&bytecode, OP_RETURN);
-    lua_add_opcode(&bytecode, OP_RETURN);
+    lua_object obj = {
+            VALUE_TYPE_NUMBER,
+            {
+                .num = 1.2
+            }
+    };
+    uint8_t constant_offset = lua_bytecode_add_constant(&bytecode, obj);
+
+    lua_bytecode_add_opcode(&bytecode, OP_CONSTANT);
+    lua_bytecode_add_uint8(&bytecode, constant_offset);
+    lua_bytecode_add_opcode(&bytecode, OP_RETURN);
 
     debug_disassemble_bytecode(&bytecode, "test");
 

@@ -12,7 +12,11 @@ void lua_bytecode_add_opcode(lua_bytecode *bytecode, lua_opcode opcode) {
     sb_push(bytecode->opcodes, opcode);
 }
 
-size_t lua_bytecode_add_constant(lua_bytecode *bytecode, lua_object constant) {
+void lua_bytecode_add_uint8(lua_bytecode *bytecode, uint8_t data) {
+    sb_push(bytecode->opcodes, data);
+}
+
+uint32_t lua_bytecode_add_constant(lua_bytecode *bytecode, lua_object constant) {
     sb_push(bytecode->constants, constant);
 
     // returns offset in the array of constants

@@ -8,6 +8,7 @@
 
 typedef enum {
     OP_RETURN,
+    OP_CONSTANT
 } lua_opcode;
 
 typedef struct {
@@ -19,7 +20,8 @@ typedef struct {
 
 void lua_init_bytecode(lua_bytecode *bytecode);
 void lua_bytecode_add_opcode(lua_bytecode *bytecode, lua_opcode opcode);
-size_t lua_bytecode_add_constant(lua_bytecode *bytecode, lua_object constant);
+void lua_bytecode_add_uint8(lua_bytecode *bytecode, uint8_t data);
+uint32_t lua_bytecode_add_constant(lua_bytecode *bytecode, lua_object constant);
 void lua_free_bytecode(lua_bytecode *bytecode);
 
 #endif
