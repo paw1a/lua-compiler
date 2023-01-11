@@ -1,5 +1,8 @@
 #include "compiler.h"
 #include "lexer.h"
+#include "memory.h"
+#include "bytecode.h"
+#include "debug.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,6 +43,18 @@ static char *read_file(const char *filename) {
 int main(int argc, char **argv) {
     if (argc < 2)
         return 1;
+
+    lua_bytecode bytecode;
+    lua_init_bytecode(&bytecode);
+
+    lua_add_opcode(&bytecode, OP_RETURN);
+    lua_add_opcode(&bytecode, OP_RETURN);
+
+    debug_disassemble_bytecode(&bytecode, "test");
+
+    lua_free_bytecode(&bytecode);
+
+    return 0;
 
     char *filename = argv[1];
     char *source = read_file(filename);
