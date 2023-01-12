@@ -56,9 +56,11 @@ int main(int argc, char **argv) {
     };
     uint8_t constant_offset = lua_bytecode_add_constant(&bytecode, obj);
 
-    lua_bytecode_add_opcode(&bytecode, OP_CONSTANT);
-    lua_bytecode_add_uint8(&bytecode, constant_offset);
-    lua_bytecode_add_opcode(&bytecode, OP_RETURN);
+    lua_bytecode_write_opcode(&bytecode, OP_CONSTANT);
+    lua_bytecode_write_uint8(&bytecode, constant_offset);
+    lua_bytecode_write_opcode(&bytecode, OP_RETURN);
+
+
 
     debug_disassemble_bytecode(&bytecode, "test");
 

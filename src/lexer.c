@@ -1,7 +1,6 @@
 #include "lexer.h"
 
 #include <string.h>
-#include <stdio.h>
 
 void initialize_lexer(lua_lexer *lexer, char *source) {
     lexer->state = LEXER_STATE_START;
