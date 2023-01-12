@@ -1,9 +1,4 @@
-#include "compiler.h"
-#include "lexer.h"
-#include "memory.h"
-#include "bytecode.h"
-#include "debug.h"
-#include "value.h"
+#include "vm.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,51 +40,16 @@ int main(int argc, char **argv) {
     if (argc < 2)
         return 1;
 
-    lua_bytecode bytecode;
-    lua_init_bytecode(&bytecode);
-
-    lua_object obj = {
-            VALUE_TYPE_NUMBER,
-            {
-                .num = 1.2
-            }
-    };
-    uint8_t constant_offset = lua_bytecode_add_constant(&bytecode, obj);
-
-    lua_bytecode_write_opcode(&bytecode, OP_CONSTANT);
-    lua_bytecode_write_uint8(&bytecode, constant_offset);
-    lua_bytecode_write_opcode(&bytecode, OP_RETURN);
-
-
-
-    debug_disassemble_bytecode(&bytecode, "test");
-
-    lua_free_bytecode(&bytecode);
-
-    return 0;
-
     char *filename = argv[1];
     char *source = read_file(filename);
     if (source == NULL)
         return 1;
 
-    lua_lexer lexer;
-    initialize_lexer(&lexer, source);
+    lua_vm vm;
+    lua_init_vm(&vm);
 
-    int line = -1;
-    for (;;) {
-        lua_token token = next_token(&lexer);
-        if (token.line != line) {
-            printf("%4d ", token.line + 1);
-            line = token.line;
-        } else {
-            printf("   | ");
-        }
-        printf("%2d '%.*s'\n", token.type, (int)token.len, token.start);
-
-        if (token.type == TOKEN_EOF)
-            break;
-    }
+    if (lua_interpret(&vm, source))
+        return 1;
 
     free(source);
 

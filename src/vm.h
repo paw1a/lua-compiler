@@ -21,7 +21,7 @@ typedef enum {
     INTERPRET_RUNTIME_ERROR
 } lua_interpret_result;
 
-lua_interpret_result interpret(lua_vm *vm, lua_bytecode *bytecode);
+lua_interpret_result lua_interpret(lua_vm *vm, const char *source);
 
 void lua_push(lua_vm *vm, lua_object value);
 lua_object lua_pop(lua_vm *vm);

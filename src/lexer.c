@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-void initialize_lexer(lua_lexer *lexer, char *source) {
+void lua_init_lexer(lua_lexer *lexer, const char *source) {
     lexer->state = LEXER_STATE_START;
     lexer->start = source;
     lexer->current = source;
@@ -60,7 +60,7 @@ static lua_token_type get_identifier_type(const char *identifier, size_t len) {
     return TOKEN_IDENTIFIER;
 }
 
-lua_token next_token(lua_lexer *lexer) {
+lua_token lua_next_token(lua_lexer *lexer) {
     lua_token token = { 0 };
     lexer->state = LEXER_STATE_START;
 

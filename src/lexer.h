@@ -33,7 +33,7 @@ typedef struct {
     int column;
 } lua_lexer;
 
-void initialize_lexer(lua_lexer *lexer, char *source);
+void lua_init_lexer(lua_lexer *lexer, const char *source);
 
 typedef enum {
     TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH, // + - * /
@@ -70,7 +70,7 @@ typedef struct {
     int column;
 } lua_token;
 
-lua_token next_token(lua_lexer *lexer);
+lua_token lua_next_token(lua_lexer *lexer);
 
 typedef struct {
     const char *keyword;
