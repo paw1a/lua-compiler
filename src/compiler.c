@@ -7,16 +7,6 @@ void lua_init_compiler(lua_compiler *compiler) {
     compiler->bytecode = NULL;
 }
 
-bool lua_compile(lua_compiler *compiler, const char *source, lua_bytecode *bytecode) {
-    lua_lexer lexer;
-    lua_init_lexer(&lexer, source);
-
-    compiler->lexer = &lexer;
-    compiler->bytecode = bytecode;
-
-    return true;
-}
-
 static void advance(lua_compiler *compiler) {
     compiler->previous = compiler->current;
 
@@ -39,4 +29,20 @@ static void consume(lua_compiler *compiler,
     // TODO: error handling
 }
 
+static void compile_expression(lua_compiler *compiler) {
 
+}
+
+bool lua_compile(lua_compiler *compiler, const char *source, lua_bytecode *bytecode) {
+    lua_lexer lexer;
+    lua_init_lexer(&lexer, source);
+
+    compiler->lexer = &lexer;
+    compiler->bytecode = bytecode;
+
+    advance(compiler);
+    compile_expression(compiler);
+    consume(compiler, TOKEN_EOF, "expected end of file");
+
+    return true;
+}
