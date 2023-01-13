@@ -33,9 +33,16 @@ uint32_t lua_bytecode_emit_opcode(lua_bytecode *bytecode, lua_opcode opcode) {
 
 uint32_t lua_bytecode_emit_constant(lua_bytecode *bytecode, lua_object constant) {
     sb_push(bytecode->constants, constant);
+    uint8_t index = sb_size(bytecode->constants) - 1;
+    uint8_t opcode = OP_CONSTANT;
 
-    // returns offset in the array of constants
-    return sb_size(bytecode->constants) - 1;
+    uint16_t instruction = opcode;
+    instruction = instruction << 8 | index;
+
+    lua_bytecode_emit_uint16(bytecode, instruction);
+
+    // returns index in the array of constants
+    return index;
 }
 
 void lua_free_bytecode(lua_bytecode *bytecode) {
