@@ -1,6 +1,7 @@
 #include "debug.h"
 #include "memory.h"
 #include "bytecode.h"
+#include "lexer.h"
 
 #include <stdio.h>
 
@@ -37,5 +38,25 @@ uint32_t debug_disassemble_instruction(lua_bytecode *bytecode, uint32_t offset) 
         default:
             printf("unknown opcode %d\n", opcode);
             return offset + 1;
+    }
+}
+
+void debug_print_tokens(const char *source) {
+    lua_lexer lexer;
+    lua_init_lexer(&lexer, source);
+
+    int line = -1;
+    for (;;) {
+        lua_token token = lua_next_token(&lexer);
+        if (token.line != line) {
+            printf("%4d ", token.line + 1);
+            line = token.line;
+        } else {
+            printf("   | ");
+        }
+        printf("%2d '%.*s'\n", token.type, (int)token.len, token.start);
+
+        if (token.type == TOKEN_EOF)
+            break;
     }
 }

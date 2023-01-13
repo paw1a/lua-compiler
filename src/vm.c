@@ -47,7 +47,10 @@ lua_interpret_result lua_interpret(lua_vm *vm, const char *source) {
     lua_bytecode bytecode;
     lua_init_bytecode(&bytecode);
 
-    if (!compile(source, &bytecode)) {
+    lua_compiler compiler;
+    lua_init_compiler(&compiler);
+
+    if (!lua_compile(&compiler, source, &bytecode)) {
         lua_free_bytecode(&bytecode);
         return INTERPRET_COMPILE_ERROR;
     }

@@ -1,4 +1,5 @@
 #include "vm.h"
+#include "debug.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,6 +45,8 @@ int main(int argc, char **argv) {
     char *source = read_file(filename);
     if (source == NULL)
         return 1;
+
+    debug_print_tokens(source);
 
     lua_vm vm;
     lua_init_vm(&vm);
