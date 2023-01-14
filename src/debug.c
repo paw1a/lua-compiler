@@ -24,7 +24,7 @@ static uint32_t debug_constant_instruction(const char *opcode_name,
     lua_object obj = bytecode->constants[constant_offset];
     lua_print_object(obj);
     printf("'\n");
-    return offset + 1;
+    return offset + 2;
 }
 
 uint32_t debug_disassemble_instruction(lua_bytecode *bytecode, uint32_t offset) {
@@ -35,6 +35,16 @@ uint32_t debug_disassemble_instruction(lua_bytecode *bytecode, uint32_t offset) 
             return debug_simple_instruction("OP_RETURN", offset);
         case OP_CONSTANT:
             return debug_constant_instruction("OP_CONSTANT", bytecode, offset);
+        case OP_NEGATE:
+            return debug_simple_instruction("OP_NEGATE", offset);
+        case OP_ADD:
+            return debug_simple_instruction("OP_ADD", offset);
+        case OP_SUBTRACT:
+            return debug_simple_instruction("OP_SUBTRACT", offset);
+        case OP_MULTIPLY:
+            return debug_simple_instruction("OP_MULTIPLY", offset);
+        case OP_DIVIDE:
+            return debug_simple_instruction("OP_DIVIDE", offset);
         default:
             printf("unknown opcode %d\n", opcode);
             return offset + 1;

@@ -55,13 +55,15 @@ lua_interpret_result lua_interpret(lua_vm *vm, const char *source) {
         return INTERPRET_COMPILE_ERROR;
     }
 
+    debug_disassemble_bytecode(&bytecode, "expression bytecode");
+
     vm->bytecode = &bytecode;
     vm->ip = (uint8_t *) vm->bytecode;
 
-    lua_interpret_result result = run(vm);
+//    lua_interpret_result result = run(vm);
 
     lua_free_bytecode(&bytecode);
-    return result;
+    return INTERPRET_OK;
 }
 
 void lua_push(lua_vm *vm, lua_object value) {

@@ -154,7 +154,7 @@ static void compile_binary(lua_compiler *compiler) {
             lua_bytecode_emit_opcode(compiler->bytecode, OP_ADD);
             break;
         case TOKEN_MINUS:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_NEGATE);
+            lua_bytecode_emit_opcode(compiler->bytecode, OP_SUBTRACT);
             break;
         case TOKEN_STAR:
             lua_bytecode_emit_opcode(compiler->bytecode, OP_MULTIPLY);
