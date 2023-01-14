@@ -4,8 +4,8 @@
 
 void lua_init_lexer(lua_lexer *lexer, const char *source) {
     lexer->state = LEXER_STATE_START;
-    lexer->start = source;
-    lexer->current = source;
+    lexer->start = (char *) source;
+    lexer->current = (char *) source;
     lexer->line = 0;
     lexer->column = 0;
 }
