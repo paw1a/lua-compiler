@@ -25,5 +25,6 @@ lua_interpret_result lua_interpret(lua_vm *vm, const char *source);
 
 void lua_push(lua_vm *vm, lua_object value);
 lua_object lua_pop(lua_vm *vm);
+lua_object lua_peek(lua_vm *vm, size_t depth);
 
 #endif

@@ -175,6 +175,7 @@ bool lua_compile(lua_compiler *compiler, const char *source, lua_bytecode *bytec
 
     advance(compiler);
     compile_expression(compiler);
+    lua_bytecode_emit_opcode(compiler->bytecode, OP_RETURN);
     consume(compiler, TOKEN_EOF, "expected end of file");
 
     return true;
