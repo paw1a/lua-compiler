@@ -35,6 +35,12 @@ uint32_t debug_disassemble_instruction(lua_bytecode *bytecode, uint32_t offset) 
             return debug_simple_instruction("OP_RETURN", offset);
         case OP_CONSTANT:
             return debug_constant_instruction("OP_CONSTANT", bytecode, offset);
+        case OP_NIL:
+            return debug_simple_instruction("OP_NIL", offset);
+        case OP_TRUE:
+            return debug_simple_instruction("OP_TRUE", offset);
+        case OP_FALSE:
+            return debug_simple_instruction("OP_FALSE", offset);
         case OP_NEGATE:
             return debug_simple_instruction("OP_NEGATE", offset);
         case OP_ADD:

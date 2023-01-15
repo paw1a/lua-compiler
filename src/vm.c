@@ -29,6 +29,15 @@ static lua_interpret_result run(lua_vm *vm) {
                 lua_push(vm, constant);
                 break;
             }
+            case OP_NIL:
+                lua_push(vm, lua_create_nil());
+                break;
+            case OP_TRUE:
+                lua_push(vm, lua_create_bool(true));
+                break;
+            case OP_FALSE:
+                lua_push(vm, lua_create_bool(false));
+                break;
             case OP_NEGATE: {
                 if (!lua_is_number(lua_peek(vm, 0))) {
                     // TODO: error handling

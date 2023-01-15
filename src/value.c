@@ -5,10 +5,10 @@
 void lua_print_object(lua_object obj) {
     switch (obj.type) {
         case VALUE_TYPE_NUMBER:
-            printf("%g", obj.as.num);
+            printf("%g", lua_get_number(obj));
             break;
         case VALUE_TYPE_BOOL:
-            printf("%d", obj.as.b);
+            printf(lua_get_bool(obj) ? "true" : "false");
             break;
         case VALUE_TYPE_NIL:
             printf("nil");

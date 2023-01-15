@@ -54,6 +54,7 @@ typedef struct {
 } lua_parse_rule;
 
 static void compile_number(lua_compiler *compiler);
+static void compile_literal(lua_compiler *compiler);
 static void compile_grouping(lua_compiler *compiler);
 static void compile_unary(lua_compiler *compiler);
 static void compile_binary(lua_compiler *compiler);
@@ -82,13 +83,13 @@ lua_parse_rule parse_rules[] = {
         [TOKEN_NUMBER]        = {compile_number,   NULL,           PRECEDENCE_NONE},
         [TOKEN_AND]           = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_ELSE]          = {NULL,             NULL,           PRECEDENCE_NONE},
-        [TOKEN_FALSE]         = {NULL,             NULL,           PRECEDENCE_NONE},
+        [TOKEN_FALSE]         = {compile_literal,  NULL,           PRECEDENCE_NONE},
         [TOKEN_FOR]           = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_IF]            = {NULL,             NULL,           PRECEDENCE_NONE},
-        [TOKEN_NIL]           = {NULL,             NULL,           PRECEDENCE_NONE},
+        [TOKEN_NIL]           = {compile_literal,  NULL,           PRECEDENCE_NONE},
         [TOKEN_OR]            = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_RETURN]        = {NULL,             NULL,           PRECEDENCE_NONE},
-        [TOKEN_TRUE]          = {NULL,             NULL,           PRECEDENCE_NONE},
+        [TOKEN_TRUE]          = {compile_literal,  NULL,           PRECEDENCE_NONE},
         [TOKEN_WHILE]         = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_ERROR]         = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_EOF]           = {NULL,             NULL,           PRECEDENCE_NONE},
@@ -123,6 +124,22 @@ static void compile_number(lua_compiler *compiler) {
     lua_number number = strtod(compiler->previous.start, NULL);
     lua_object number_obj = lua_create_number(number);
     lua_bytecode_emit_constant(compiler->bytecode, number_obj);
+}
+
+static void compile_literal(lua_compiler *compiler) {
+    switch (compiler->previous.type) {
+        case TOKEN_NIL:
+            lua_bytecode_emit_opcode(compiler->bytecode, OP_NIL);
+            break;
+        case TOKEN_TRUE:
+            lua_bytecode_emit_opcode(compiler->bytecode, OP_TRUE);
+            break;
+        case TOKEN_FALSE:
+            lua_bytecode_emit_opcode(compiler->bytecode, OP_FALSE);
+            break;
+        default:
+            return;
+    }
 }
 
 static void compile_grouping(lua_compiler *compiler) {
