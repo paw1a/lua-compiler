@@ -53,3 +53,28 @@ lua_number lua_get_number(lua_object obj) {
     return obj.as.num;
 }
 
+// according to lua documentation
+// false and nil are falsy values
+bool lua_is_truthy(lua_object obj) {
+    if (lua_is_nil(obj))
+        return false;
+    else if (lua_is_bool(obj) && !lua_get_bool(obj))
+        return false;
+    return true;
+}
+
+bool lua_is_equal(lua_object a, lua_object b) {
+    if (a.type != b.type)
+        return false;
+
+    switch (a.type) {
+        case VALUE_TYPE_NUMBER:
+            return lua_get_number(a) == lua_get_number(b);
+        case VALUE_TYPE_BOOL:
+            return lua_get_bool(a) == lua_get_bool(b);
+        case VALUE_TYPE_NIL:
+            return true;
+    }
+
+    return false;
+}

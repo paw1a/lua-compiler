@@ -16,7 +16,11 @@ typedef enum {
     OP_ADD,
     OP_SUBTRACT,
     OP_MULTIPLY,
-    OP_DIVIDE
+    OP_DIVIDE,
+    OP_NOT,
+    OP_EQ,
+    OP_LT,
+    OP_LE
 } lua_opcode;
 
 typedef struct {

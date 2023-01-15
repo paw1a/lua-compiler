@@ -87,6 +87,40 @@ static lua_interpret_result run(lua_vm *vm) {
                 lua_push(vm, lua_create_number(a / b));
                 break;
             }
+            case OP_NOT: {
+                bool not_value = !lua_is_truthy(lua_pop(vm));
+                lua_push(vm, lua_create_bool(not_value));
+                break;
+            }
+            case OP_EQ: {
+                lua_object b = lua_pop(vm);
+                lua_object a = lua_pop(vm);
+                bool is_equal = lua_is_equal(a, b);
+                lua_push(vm, lua_create_bool(is_equal));
+                break;
+            }
+            case OP_LT: {
+                if (!lua_is_number(lua_peek(vm, 0)) || !lua_is_number(lua_peek(vm, 1))) {
+                    // TODO: error handling
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                lua_number b = lua_get_number(lua_pop(vm));
+                lua_number a = lua_get_number(lua_pop(vm));
+                bool is_lt = a < b;
+                lua_push(vm, lua_create_bool(is_lt));
+                break;
+            }
+            case OP_LE: {
+                if (!lua_is_number(lua_peek(vm, 0)) || !lua_is_number(lua_peek(vm, 1))) {
+                    // TODO: error handling
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                lua_number b = lua_get_number(lua_pop(vm));
+                lua_number a = lua_get_number(lua_pop(vm));
+                bool is_lt = a <= b;
+                lua_push(vm, lua_create_bool(is_lt));
+                break;
+            }
         }
     }
 }

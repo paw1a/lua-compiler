@@ -51,6 +51,14 @@ uint32_t debug_disassemble_instruction(lua_bytecode *bytecode, uint32_t offset) 
             return debug_simple_instruction("OP_MULTIPLY", offset);
         case OP_DIVIDE:
             return debug_simple_instruction("OP_DIVIDE", offset);
+        case OP_NOT:
+            return debug_simple_instruction("OP_NOT", offset);
+        case OP_LT:
+            return debug_simple_instruction("OP_LT", offset);
+        case OP_LE:
+            return debug_simple_instruction("OP_LE", offset);
+        case OP_EQ:
+            return debug_simple_instruction("OP_EQ", offset);
         default:
             printf("unknown opcode %d\n", opcode);
             return offset + 1;

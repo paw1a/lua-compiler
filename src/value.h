@@ -32,4 +32,7 @@ bool lua_is_number(lua_object obj);
 bool lua_get_bool(lua_object obj);
 lua_number lua_get_number(lua_object obj);
 
+bool lua_is_truthy(lua_object obj);
+bool lua_is_equal(lua_object a, lua_object b);
+
 #endif
