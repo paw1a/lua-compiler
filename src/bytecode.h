@@ -20,7 +20,8 @@ typedef enum {
     OP_NOT,
     OP_EQ,
     OP_LT,
-    OP_LE
+    OP_LE,
+    OP_CONCAT
 } lua_opcode;
 
 typedef struct {

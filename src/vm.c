@@ -4,6 +4,8 @@
 #include "compiler.h"
 #include "memory.h"
 
+#include <string.h>
+
 void lua_init_vm(lua_vm *vm) {
     vm->bytecode = NULL;
     vm->ip = NULL;
@@ -122,6 +124,25 @@ static lua_interpret_result run(lua_vm *vm) {
                 bool is_lt = a <= b;
                 lua_push(vm, lua_create_bool(is_lt));
                 break;
+            }
+            case OP_CONCAT: {
+                if (!lua_is_string(lua_peek(vm, 0)) || !lua_is_string(lua_peek(vm, 1))) {
+                    // TODO: error handling
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+                lua_string *b = lua_get_string(lua_pop(vm));
+                lua_string *a = lua_get_string(lua_pop(vm));
+
+                size_t concat_len = a->len + b->len;
+
+                lua_string *concat_str = alloc_string(concat_len);
+                memcpy(concat_str->chars, a->chars, a->len);
+                memcpy(concat_str->chars + a->len, b->chars, b->len);
+                concat_str->chars[concat_len] = '\0';
+
+                lua_push(vm, lua_create_gc_obj(
+                        (lua_gc_object *) concat_str, VALUE_TYPE_STRING));
             }
         }
     }

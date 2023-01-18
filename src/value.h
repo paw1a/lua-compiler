@@ -40,7 +40,10 @@ void lua_print_object(lua_object obj);
 lua_object lua_create_nil(void);
 lua_object lua_create_bool(bool value);
 lua_object lua_create_number(lua_number value);
+lua_object lua_create_gc_obj(lua_gc_object *gc_obj, lua_value_type type);
 lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len);
+
+lua_string *alloc_string(size_t len);
 
 bool lua_is_nil(lua_object obj);
 bool lua_is_bool(lua_object obj);

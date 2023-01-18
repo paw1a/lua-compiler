@@ -37,6 +37,11 @@ lua_object lua_create_number(lua_number value) {
     return obj;
 }
 
+lua_object lua_create_gc_obj(lua_gc_object *gc_obj, lua_value_type type) {
+    lua_object obj = {type, .gc_obj = gc_obj};
+    return obj;
+}
+
 lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len) {
     lua_object obj;
     obj.type = VALUE_TYPE_STRING;
@@ -54,6 +59,11 @@ lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len) {
     vm->obj_list = obj.gc_obj;
 
     return obj;
+}
+
+lua_string *alloc_string(size_t len) {
+    void *ptr = lua_alloc(sizeof(lua_string) + (len + 1));
+    return (lua_string *) ptr;
 }
 
 bool lua_is_nil(lua_object obj) {
@@ -106,8 +116,10 @@ bool lua_is_equal(lua_object a, lua_object b) {
         case VALUE_TYPE_NIL:
             return true;
         case VALUE_TYPE_STRING: {
-            lua_string *str_a = ((lua_string *) a.as);
-            lua_string *str_b = ((lua_string *) b.as);
+            lua_string *str_a = lua_get_string(a);
+            lua_string *str_b = lua_get_string(b);
+            return str_a->len == str_b->len &&
+                memcmp(str_a->chars, str_b->chars, str_a->len) == 0;
         }
     }
 

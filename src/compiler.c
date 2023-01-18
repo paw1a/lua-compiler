@@ -74,12 +74,12 @@ lua_parse_rule parse_rules[] = {
         [TOKEN_SLASH]         = {NULL,             compile_binary, PRECEDENCE_FACTOR},
         [TOKEN_STAR]          = {NULL,             compile_binary, PRECEDENCE_FACTOR},
         [TOKEN_NOT]           = {compile_unary,    NULL,           PRECEDENCE_NONE},
-        [TOKEN_NOT_EQUAL]     = {NULL,             compile_binary, PRECEDENCE_NONE},
-        [TOKEN_EQUAL]         = {NULL,             compile_binary, PRECEDENCE_NONE},
-        [TOKEN_GREATER]       = {NULL,             compile_binary, PRECEDENCE_NONE},
-        [TOKEN_GREATER_EQUAL] = {NULL,             compile_binary, PRECEDENCE_NONE},
-        [TOKEN_LESS]          = {NULL,             compile_binary, PRECEDENCE_NONE},
-        [TOKEN_LESS_EQUAL]    = {NULL,             compile_binary, PRECEDENCE_NONE},
+        [TOKEN_NOT_EQUAL]     = {NULL,             compile_binary, PRECEDENCE_EQUALITY},
+        [TOKEN_EQUAL]         = {NULL,             compile_binary, PRECEDENCE_EQUALITY},
+        [TOKEN_GREATER]       = {NULL,             compile_binary, PRECEDENCE_COMPARISON},
+        [TOKEN_GREATER_EQUAL] = {NULL,             compile_binary, PRECEDENCE_COMPARISON},
+        [TOKEN_LESS]          = {NULL,             compile_binary, PRECEDENCE_COMPARISON},
+        [TOKEN_LESS_EQUAL]    = {NULL,             compile_binary, PRECEDENCE_COMPARISON},
         [TOKEN_IDENTIFIER]    = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_STRING]        = {compile_string,   NULL,           PRECEDENCE_NONE},
         [TOKEN_NUMBER]        = {compile_number,   NULL,           PRECEDENCE_NONE},
@@ -93,6 +93,7 @@ lua_parse_rule parse_rules[] = {
         [TOKEN_RETURN]        = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_TRUE]          = {compile_literal,  NULL,           PRECEDENCE_NONE},
         [TOKEN_WHILE]         = {NULL,             NULL,           PRECEDENCE_NONE},
+        [TOKEN_DOUBLE_DOT]    = {compile_binary,   NULL,           PRECEDENCE_TERM},
         [TOKEN_ERROR]         = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_EOF]           = {NULL,             NULL,           PRECEDENCE_NONE},
 };
@@ -176,39 +177,43 @@ static void compile_binary(lua_compiler *compiler) {
 
     parse_precedence(compiler, (infix_rule.precedence + 1));
 
+    lua_bytecode *bytecode = compiler->bytecode;
     switch (operator) {
         case TOKEN_PLUS:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_ADD);
+            lua_bytecode_emit_opcode(bytecode, OP_ADD);
             break;
         case TOKEN_MINUS:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_SUBTRACT);
+            lua_bytecode_emit_opcode(bytecode, OP_SUBTRACT);
             break;
         case TOKEN_STAR:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_MULTIPLY);
+            lua_bytecode_emit_opcode(bytecode, OP_MULTIPLY);
             break;
         case TOKEN_SLASH:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_DIVIDE);
+            lua_bytecode_emit_opcode(bytecode, OP_DIVIDE);
             break;
         case TOKEN_EQUAL:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_EQ);
+            lua_bytecode_emit_opcode(bytecode, OP_EQ);
             break;
         case TOKEN_NOT_EQUAL:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_EQ);
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_NOT);
+            lua_bytecode_emit_opcode(bytecode, OP_EQ);
+            lua_bytecode_emit_opcode(bytecode, OP_NOT);
             break;
         case TOKEN_LESS:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_LT);
+            lua_bytecode_emit_opcode(bytecode, OP_LT);
             break;
         case TOKEN_LESS_EQUAL:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_LE);
+            lua_bytecode_emit_opcode(bytecode, OP_LE);
             break;
         case TOKEN_GREATER:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_LE);
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_NOT);
+            lua_bytecode_emit_opcode(bytecode, OP_LE);
+            lua_bytecode_emit_opcode(bytecode, OP_NOT);
             break;
         case TOKEN_GREATER_EQUAL:
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_LT);
-            lua_bytecode_emit_opcode(compiler->bytecode, OP_NOT);
+            lua_bytecode_emit_opcode(bytecode, OP_LT);
+            lua_bytecode_emit_opcode(bytecode, OP_NOT);
+            break;
+        case TOKEN_DOUBLE_DOT:
+            lua_bytecode_emit_opcode(bytecode, OP_CONCAT);
             break;
         default: return;
     }
