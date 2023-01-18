@@ -12,6 +12,14 @@ void *lua_realloc(void *ptr, size_t old_size, size_t new_size) {
     return result;
 }
 
+void *lua_alloc(size_t size) {
+    return lua_realloc(NULL, 0, size);
+}
+
+void lua_free(void *ptr) {
+    lua_realloc(ptr, 0, 0);
+}
+
 void lua_sb_grow(void **arr, size_t item_size) {
     size_t old_size = *arr ? sb_capacity(*arr) : 0;
     size_t new_size = *arr ? 2 * sb_capacity(*arr) : min_sb_size;

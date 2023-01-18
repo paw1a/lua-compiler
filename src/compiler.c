@@ -55,6 +55,7 @@ typedef struct {
 
 static void compile_number(lua_compiler *compiler);
 static void compile_literal(lua_compiler *compiler);
+static void compile_string(lua_compiler *compiler);
 static void compile_grouping(lua_compiler *compiler);
 static void compile_unary(lua_compiler *compiler);
 static void compile_binary(lua_compiler *compiler);
@@ -79,7 +80,7 @@ lua_parse_rule parse_rules[] = {
         [TOKEN_LESS]          = {NULL,             compile_binary, PRECEDENCE_NONE},
         [TOKEN_LESS_EQUAL]    = {NULL,             compile_binary, PRECEDENCE_NONE},
         [TOKEN_IDENTIFIER]    = {NULL,             NULL,           PRECEDENCE_NONE},
-        [TOKEN_STRING]        = {NULL,             NULL,           PRECEDENCE_NONE},
+        [TOKEN_STRING]        = {compile_string,   NULL,           PRECEDENCE_NONE},
         [TOKEN_NUMBER]        = {compile_number,   NULL,           PRECEDENCE_NONE},
         [TOKEN_AND]           = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_ELSE]          = {NULL,             NULL,           PRECEDENCE_NONE},
@@ -140,6 +141,10 @@ static void compile_literal(lua_compiler *compiler) {
         default:
             return;
     }
+}
+
+static void compile_string(lua_compiler *compiler) {
+
 }
 
 static void compile_grouping(lua_compiler *compiler) {

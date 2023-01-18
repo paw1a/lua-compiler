@@ -2,11 +2,13 @@
 #include "common.h"
 #include "debug.h"
 #include "compiler.h"
+#include "memory.h"
 
 void lua_init_vm(lua_vm *vm) {
     vm->bytecode = NULL;
     vm->ip = NULL;
     vm->sp = vm->stack;
+    vm->obj_list = NULL;
 }
 
 static lua_interpret_result run(lua_vm *vm) {
@@ -163,5 +165,10 @@ lua_object lua_peek(lua_vm *vm, size_t depth) {
 }
 
 void lua_free_vm(lua_vm *vm) {
-
+    lua_object *head = vm->obj_list;
+    while (head != NULL) {
+        lua_object *next = head->next_obj;
+        lua_free(head);
+        head = next;
+    }
 }

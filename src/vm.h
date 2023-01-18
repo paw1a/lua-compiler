@@ -2,14 +2,16 @@
 #define VM_H
 
 #include "bytecode.h"
+#include "common.h"
 
 #define STACK_MAX_SIZE 256
 
-typedef struct {
+typedef struct lua_vm {
     lua_bytecode *bytecode;
     uint8_t *ip;
     lua_object stack[STACK_MAX_SIZE];
     lua_object *sp;
+    lua_object *obj_list;
 } lua_vm;
 
 void lua_init_vm(lua_vm *vm);
