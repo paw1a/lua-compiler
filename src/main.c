@@ -55,6 +55,7 @@ int main(int argc, char **argv) {
         return 1;
 
     free(source);
+    lua_free_vm(&vm);
 
     return 0;
 }
