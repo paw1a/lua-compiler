@@ -132,7 +132,7 @@ lua_interpret_result lua_interpret(lua_vm *vm, const char *source) {
     lua_init_bytecode(&bytecode);
 
     lua_compiler compiler;
-    lua_init_compiler(&compiler);
+    lua_init_compiler(&compiler, vm);
 
     if (!lua_compile(&compiler, source, &bytecode)) {
         lua_free_bytecode(&bytecode);
@@ -165,9 +165,9 @@ lua_object lua_peek(lua_vm *vm, size_t depth) {
 }
 
 void lua_free_vm(lua_vm *vm) {
-    lua_object *head = vm->obj_list;
+    lua_gc_object *head = vm->obj_list;
     while (head != NULL) {
-        lua_object *next = head->next_obj;
+        lua_gc_object *next = head->next;
         lua_free(head);
         head = next;
     }

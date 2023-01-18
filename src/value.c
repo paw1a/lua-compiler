@@ -16,6 +16,9 @@ void lua_print_object(lua_object obj) {
         case VALUE_TYPE_NIL:
             printf("nil");
             break;
+        case VALUE_TYPE_STRING:
+            printf("%s", ((lua_string *) obj.gc_obj)->chars);
+            break;
     }
 }
 
@@ -34,21 +37,23 @@ lua_object lua_create_number(lua_number value) {
     return obj;
 }
 
-lua_object lua_create_string(struct lua_vm *vm, char *str, size_t len) {
-    void *ptr = lua_alloc(sizeof(lua_object) +
-            sizeof(lua_string) + len + 1);
-    lua_object *obj = (lua_object *) ptr;
-    obj->type = VALUE_TYPE_STRING;
+lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len) {
+    lua_object obj;
+    obj.type = VALUE_TYPE_STRING;
 
-    lua_string *str_obj = (lua_string *) obj->as;
+    void *ptr = lua_alloc(sizeof(lua_string) + (len + 1));
+    lua_string *str_obj = ptr;
+
     memcpy(str_obj->chars, str, len);
     str_obj->chars[len] = '\0';
     str_obj->len = len;
 
-    obj->next_obj = vm->obj_list;
-    vm->obj_list = obj;
+    obj.gc_obj = (lua_gc_object *) str_obj;
 
-    return *obj;
+    str_obj->gc_obj.next = vm->obj_list;
+    vm->obj_list = obj.gc_obj;
+
+    return obj;
 }
 
 bool lua_is_nil(lua_object obj) {
@@ -75,8 +80,8 @@ lua_number lua_get_number(lua_object obj) {
     return obj.num;
 }
 
-lua_string lua_get_string(lua_object obj) {
-    return *(lua_string *) obj.as;
+lua_string *lua_get_string(lua_object obj) {
+    return (lua_string *) obj.gc_obj;
 }
 
 // according to lua documentation
@@ -100,6 +105,10 @@ bool lua_is_equal(lua_object a, lua_object b) {
             return lua_get_bool(a) == lua_get_bool(b);
         case VALUE_TYPE_NIL:
             return true;
+        case VALUE_TYPE_STRING: {
+            lua_string *str_a = ((lua_string *) a.as);
+            lua_string *str_b = ((lua_string *) b.as);
+        }
     }
 
     return false;

@@ -2,9 +2,10 @@
 
 #include <stdio.h>
 
-void lua_init_compiler(lua_compiler *compiler) {
+void lua_init_compiler(lua_compiler *compiler, lua_vm *vm) {
     compiler->lexer = NULL;
     compiler->bytecode = NULL;
+    compiler->vm = vm;
 }
 
 static void advance(lua_compiler *compiler) {
@@ -144,7 +145,8 @@ static void compile_literal(lua_compiler *compiler) {
 }
 
 static void compile_string(lua_compiler *compiler) {
-
+    lua_bytecode_emit_constant(compiler->bytecode, lua_create_string(
+            compiler->vm, compiler->previous.start + 1, compiler->previous.len - 2));
 }
 
 static void compile_grouping(lua_compiler *compiler) {

@@ -6,6 +6,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-struct lua_vm;
+typedef struct lua_vm lua_vm;
 
 #endif

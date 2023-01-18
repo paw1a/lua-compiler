@@ -6,13 +6,13 @@
 
 #define STACK_MAX_SIZE 256
 
-typedef struct lua_vm {
+struct lua_vm {
     lua_bytecode *bytecode;
     uint8_t *ip;
     lua_object stack[STACK_MAX_SIZE];
     lua_object *sp;
-    lua_object *obj_list;
-} lua_vm;
+    lua_gc_object *obj_list;
+};
 
 void lua_init_vm(lua_vm *vm);
 void lua_free_vm(lua_vm *vm);
