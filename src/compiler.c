@@ -93,7 +93,7 @@ lua_parse_rule parse_rules[] = {
         [TOKEN_RETURN]        = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_TRUE]          = {compile_literal,  NULL,           PRECEDENCE_NONE},
         [TOKEN_WHILE]         = {NULL,             NULL,           PRECEDENCE_NONE},
-        [TOKEN_DOUBLE_DOT]    = {compile_binary,   NULL,           PRECEDENCE_TERM},
+        [TOKEN_DOUBLE_DOT]    = {NULL,             compile_binary, PRECEDENCE_TERM},
         [TOKEN_ERROR]         = {NULL,             NULL,           PRECEDENCE_NONE},
         [TOKEN_EOF]           = {NULL,             NULL,           PRECEDENCE_NONE},
 };

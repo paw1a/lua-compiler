@@ -55,7 +55,7 @@ lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len) {
 
     obj.gc_obj = (lua_gc_object *) str_obj;
 
-    str_obj->gc_obj.next = vm->obj_list;
+    obj.gc_obj->next = vm->obj_list;
     vm->obj_list = obj.gc_obj;
 
     return obj;

@@ -139,6 +139,7 @@ static lua_interpret_result run(lua_vm *vm) {
                 lua_string *concat_str = alloc_string(concat_len);
                 memcpy(concat_str->chars, a->chars, a->len);
                 memcpy(concat_str->chars + a->len, b->chars, b->len);
+                concat_str->len = concat_len;
                 concat_str->chars[concat_len] = '\0';
 
                 lua_push(vm, lua_create_gc_obj(
