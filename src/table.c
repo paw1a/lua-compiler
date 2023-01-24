@@ -90,6 +90,24 @@ lua_object lua_table_find(lua_table *table, lua_object key) {
     return lua_nil;
 }
 
+bool lua_table_contains(lua_table *table, lua_object key) {
+    uint32_t hash = lua_hash_object(key);
+    size_t index = hash % table->capacity;
+
+    for (size_t i = 0; i < table->capacity; i++) {
+        lua_table_entry *entry = &table->entries[index];
+        if (lua_is_equal(entry->key, lua_nil))
+            break;
+
+        if (!entry->tombstone && lua_is_equal(key, entry->key))
+            return true;
+
+        index = (index + 1) % table->capacity;
+    }
+
+    return false;
+}
+
 bool lua_table_delete(lua_table *table, lua_object key) {
     uint32_t hash = lua_hash_object(key);
     size_t index = hash % table->capacity;
