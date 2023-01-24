@@ -27,6 +27,7 @@ struct sb_header {
 void lua_sb_grow(void **sb, size_t item_size);
 void *lua_realloc(void *pointer, size_t old_size, size_t new_size);
 void *lua_alloc(size_t size);
+void *lua_calloc(size_t count, size_t size);
 void lua_free(void *ptr);
 
 #endif

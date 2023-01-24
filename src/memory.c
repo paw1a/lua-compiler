@@ -1,6 +1,7 @@
 #include "memory.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 void *lua_realloc(void *ptr, size_t old_size, size_t new_size) {
     if (new_size == 0) {
@@ -14,6 +15,12 @@ void *lua_realloc(void *ptr, size_t old_size, size_t new_size) {
 
 void *lua_alloc(size_t size) {
     return lua_realloc(NULL, 0, size);
+}
+
+void *lua_calloc(size_t count, size_t size) {
+    void *ptr = lua_realloc(NULL, 0, count * size);
+    memset(ptr, 0, count * size);
+    return ptr;
 }
 
 void lua_free(void *ptr) {

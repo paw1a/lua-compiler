@@ -9,9 +9,9 @@
 typedef double lua_number;
 
 typedef enum {
+    VALUE_TYPE_NIL,
     VALUE_TYPE_NUMBER,
     VALUE_TYPE_BOOL,
-    VALUE_TYPE_NIL,
     VALUE_TYPE_STRING
 } lua_value_type;
 
@@ -35,6 +35,8 @@ typedef struct {
     char chars[];
 } lua_string;
 
+lua_object lua_nil = {.type = VALUE_TYPE_NIL};
+
 void lua_print_object(lua_object obj);
 
 lua_object lua_create_nil(void);
@@ -56,5 +58,7 @@ lua_string *lua_get_string(lua_object obj);
 
 bool lua_is_truthy(lua_object obj);
 bool lua_is_equal(lua_object a, lua_object b);
+
+uint32_t lua_hash_object(lua_object obj);
 
 #endif

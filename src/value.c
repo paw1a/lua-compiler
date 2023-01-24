@@ -23,8 +23,7 @@ void lua_print_object(lua_object obj) {
 }
 
 lua_object lua_create_nil(void) {
-    lua_object obj = {VALUE_TYPE_NIL, .num = 0};
-    return obj;
+    return lua_nil;
 }
 
 lua_object lua_create_bool(bool value) {
@@ -124,4 +123,19 @@ bool lua_is_equal(lua_object a, lua_object b) {
     }
 
     return false;
+}
+
+uint32_t lua_hash_object(lua_object obj) {
+    uint32_t hash = 0;
+    if (obj.type == VALUE_TYPE_STRING) {
+        hash = 2166136261u;
+
+        lua_string *str = (lua_string *) obj.gc_obj;
+        for (int i = 0; i < str->len; i++) {
+            hash ^= (uint8_t) str->chars[i];
+            hash *= 16777619;
+        }
+    }
+
+    return hash;
 }
