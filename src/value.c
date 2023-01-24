@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
+lua_object lua_nil = {.type = VALUE_TYPE_NIL};
+
 void lua_print_object(lua_object obj) {
     switch (obj.type) {
         case VALUE_TYPE_NUMBER:
@@ -135,6 +137,8 @@ uint32_t lua_hash_object(lua_object obj) {
             hash ^= (uint8_t) str->chars[i];
             hash *= 16777619;
         }
+    } else if (obj.type == VALUE_TYPE_NUMBER) {
+        hash = (uint32_t) obj.num;
     }
 
     return hash;

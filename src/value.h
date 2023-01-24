@@ -35,7 +35,7 @@ typedef struct {
     char chars[];
 } lua_string;
 
-lua_object lua_nil = {.type = VALUE_TYPE_NIL};
+extern lua_object lua_nil;
 
 void lua_print_object(lua_object obj);
 
