@@ -32,6 +32,7 @@ struct lua_object {
 typedef struct {
     lua_gc_object gc_obj;
     size_t len;
+    uint32_t hash;
     char chars[];
 } lua_string;
 
@@ -60,5 +61,7 @@ bool lua_is_truthy(lua_object obj);
 bool lua_is_equal(lua_object a, lua_object b);
 
 uint32_t lua_hash_object(lua_object obj);
+uint32_t lua_hash_string(lua_string *str);
+uint32_t lua_hash_number(lua_number number);
 
 #endif

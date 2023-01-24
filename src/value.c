@@ -53,6 +53,7 @@ lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len) {
     memcpy(str_obj->chars, str, len);
     str_obj->chars[len] = '\0';
     str_obj->len = len;
+    str_obj->hash = lua_hash_string(str_obj);
 
     obj.gc_obj = (lua_gc_object *) str_obj;
 
@@ -127,19 +128,38 @@ bool lua_is_equal(lua_object a, lua_object b) {
     return false;
 }
 
-uint32_t lua_hash_object(lua_object obj) {
-    uint32_t hash = 0;
-    if (obj.type == VALUE_TYPE_STRING) {
-        hash = 2166136261u;
+uint32_t lua_hash_string(lua_string *str) {
+    uint32_t hash = 2166136261u;
 
-        lua_string *str = (lua_string *) obj.gc_obj;
-        for (int i = 0; i < str->len; i++) {
-            hash ^= (uint8_t) str->chars[i];
-            hash *= 16777619;
-        }
-    } else if (obj.type == VALUE_TYPE_NUMBER) {
-        hash = (uint32_t) obj.num;
+    for (int i = 0; i < str->len; i++) {
+        hash ^= (uint8_t) str->chars[i];
+        hash *= 16777619;
     }
 
     return hash;
+}
+
+uint32_t lua_hash_number(lua_number number) {
+    uint32_t hash = 2166136261u;
+
+    char *ptr = (char *) &number;
+    for (int i = 0; i < sizeof(lua_number); i++) {
+        hash ^= (uint8_t) ptr[i];
+        hash *= 16777619;
+    }
+
+    return hash;
+}
+
+uint32_t lua_hash_object(lua_object obj) {
+    switch (obj.type) {
+        case VALUE_TYPE_NUMBER:
+            return lua_hash_number(obj.num);
+        case VALUE_TYPE_STRING:
+            return ((lua_string *) obj.gc_obj)->hash;
+        case VALUE_TYPE_BOOL:
+            return obj.b;
+        default:
+            return 0;
+    }
 }
