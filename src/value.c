@@ -60,6 +60,13 @@ lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len) {
     obj.gc_obj->next = vm->obj_list;
     vm->obj_list = obj.gc_obj;
 
+    if (lua_table_contains_string(&vm->string_pool, str_obj)) {
+        lua_free(str_obj);
+        return obj;
+    }
+
+    lua_table_add(&vm->string_pool, obj, lua_nil);
+
     return obj;
 }
 
@@ -120,8 +127,7 @@ bool lua_is_equal(lua_object a, lua_object b) {
         case VALUE_TYPE_STRING: {
             lua_string *str_a = lua_get_string(a);
             lua_string *str_b = lua_get_string(b);
-            return str_a->len == str_b->len &&
-                memcmp(str_a->chars, str_b->chars, str_a->len) == 0;
+            return str_a == str_b;
         }
     }
 

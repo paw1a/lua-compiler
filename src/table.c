@@ -108,6 +108,28 @@ bool lua_table_contains(lua_table *table, lua_object key) {
     return false;
 }
 
+bool lua_table_contains_string(lua_table *table, lua_string *str) {
+    uint32_t hash = lua_hash_string(str);
+    size_t index = hash % table->capacity;
+
+    for (size_t i = 0; i < table->capacity; i++) {
+        lua_table_entry *entry = &table->entries[index];
+        if (lua_is_equal(entry->key, lua_nil))
+            break;
+
+        lua_string *key_string = (lua_string *) entry->key.gc_obj;
+        if (!entry->tombstone &&
+                key_string->len == str->len &&
+                key_string->hash == str->hash &&
+                memcmp(key_string->chars, str->chars, str->len) == 0)
+            return true;
+
+        index = (index + 1) % table->capacity;
+    }
+
+    return false;
+}
+
 bool lua_table_delete(lua_table *table, lua_object key) {
     uint32_t hash = lua_hash_object(key);
     size_t index = hash % table->capacity;

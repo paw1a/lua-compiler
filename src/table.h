@@ -28,6 +28,7 @@ bool lua_table_add(lua_table *table, lua_object key, lua_object value);
 bool lua_table_delete(lua_table *table, lua_object key);
 lua_object lua_table_find(lua_table *table, lua_object key);
 bool lua_table_contains(lua_table *table, lua_object key);
+bool lua_table_contains_string(lua_table *table, lua_string *str);
 
 void lua_table_free(lua_table *table);
 

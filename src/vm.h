@@ -3,6 +3,7 @@
 
 #include "bytecode.h"
 #include "common.h"
+#include "table.h"
 
 #define STACK_MAX_SIZE 256
 
@@ -12,6 +13,7 @@ struct lua_vm {
     lua_object stack[STACK_MAX_SIZE];
     lua_object *sp;
     lua_gc_object *obj_list;
+    lua_table string_pool;
 };
 
 void lua_init_vm(lua_vm *vm);

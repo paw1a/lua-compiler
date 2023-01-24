@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "compiler.h"
 #include "memory.h"
+#include "table.h"
 
 #include <string.h>
 
@@ -11,6 +12,7 @@ void lua_init_vm(lua_vm *vm) {
     vm->ip = NULL;
     vm->sp = vm->stack;
     vm->obj_list = NULL;
+    lua_table_init(&vm->string_pool);
 }
 
 static lua_interpret_result run(lua_vm *vm) {
@@ -193,4 +195,5 @@ void lua_free_vm(lua_vm *vm) {
         lua_free(head);
         head = next;
     }
+    lua_table_free(&vm->string_pool);
 }
