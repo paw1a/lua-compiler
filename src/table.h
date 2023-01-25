@@ -9,6 +9,7 @@
 
 #define MAX_LOAD_FACTOR 0.75
 #define TABLE_INIT_SIZE 8
+#define MAX_BITS 32
 
 typedef struct {
     lua_object key;
@@ -20,6 +21,10 @@ typedef struct {
     size_t size;
     size_t capacity;
     lua_table_entry *entries;
+
+    size_t array_size;
+    size_t array_capacity;
+    lua_object *array;
 } lua_table;
 
 void lua_table_init(lua_table *table);

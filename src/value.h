@@ -48,14 +48,38 @@ lua_object lua_create_string(struct lua_vm *vm, const char *str, size_t len);
 
 lua_string *alloc_string(size_t len);
 
-bool lua_is_nil(lua_object obj);
-bool lua_is_bool(lua_object obj);
-bool lua_is_number(lua_object obj);
-bool lua_is_string(lua_object obj);
+static inline bool lua_is_nil(lua_object obj) {
+    return obj.type == VALUE_TYPE_NIL;
+}
 
-bool lua_get_bool(lua_object obj);
-lua_number lua_get_number(lua_object obj);
-lua_string *lua_get_string(lua_object obj);
+static inline bool lua_is_bool(lua_object obj) {
+    return obj.type == VALUE_TYPE_BOOL;
+}
+
+static inline bool lua_is_number(lua_object obj) {
+    return obj.type == VALUE_TYPE_NUMBER;
+}
+
+static inline bool lua_is_integer(lua_object obj) {
+    return obj.type == VALUE_TYPE_NUMBER &&
+           (int32_t) obj.num == obj.num;
+}
+
+static inline bool lua_is_string(lua_object obj) {
+    return obj.type == VALUE_TYPE_STRING;
+}
+
+static inline bool lua_get_bool(lua_object obj) {
+    return obj.b;
+}
+
+static inline lua_number lua_get_number(lua_object obj) {
+    return obj.num;
+}
+
+static inline lua_string *lua_get_string(lua_object obj) {
+    return (lua_string *) obj.gc_obj;
+}
 
 bool lua_is_truthy(lua_object obj);
 bool lua_is_equal(lua_object a, lua_object b);

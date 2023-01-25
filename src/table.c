@@ -1,17 +1,35 @@
 #include "table.h"
 #include "value.h"
 #include "memory.h"
+#include "util.h"
 
 #include <string.h>
 #include <stdbool.h>
 
 void lua_table_init(lua_table *table) {
     table->entries = NULL;
+    table->array = NULL;
     table->capacity = 0;
     table->size = 0;
+    table->array_size = 0;
+    table->array_capacity = 0;
 }
 
-static bool table_expand(lua_table *table) {
+static void count_int_keys(lua_table *table, uint32_t *int_keys) {
+    for (size_t i = 0; i < table->capacity; i++) {
+        lua_table_entry entry = table->entries[i];
+        if (lua_is_integer(entry.key) && entry.key.num > 0)
+            int_keys[log2_32((uint32_t) entry.key.num)]++;
+    }
+
+    for (size_t i = 0; i < table->array_capacity; i++) {
+        lua_object obj = table->array[i];
+        if (!lua_is_nil(obj))
+            int_keys[log2_32((uint32_t) i)]++;
+    }
+}
+
+static bool table_rehash(lua_table *table) {
     if (table->entries == NULL) {
         table->entries = lua_calloc(TABLE_INIT_SIZE, sizeof(lua_table_entry));
         if (table->entries == NULL)
@@ -20,13 +38,32 @@ static bool table_expand(lua_table *table) {
         return true;
     }
 
+    uint32_t int_keys[MAX_BITS];
+    memset(int_keys, 0, MAX_BITS);
+    count_int_keys(table, int_keys);
+
+    bool array_expanded = false;
+    size_t half_total_size = (table->size + table->array_size) / 2;
+    for (size_t i = 0; i < MAX_BITS; i++) {
+        if (int_keys[i] >= half_total_size) {
+            table->array = lua_realloc(table->array, table->array_capacity, 1 << i);
+            if (table->array == NULL)
+                return false;
+            table->array_capacity = 1 << i;
+            array_expanded = true;
+            break;
+        }
+    }
+
     lua_table old_table = *table;
 
-    table->capacity *= 2;
-    table->entries = lua_calloc(table->capacity, sizeof(lua_table_entry));
-    if (table->entries == NULL) {
-        lua_free(old_table.entries);
-        return false;
+    if (!array_expanded) {
+        table->capacity *= 2;
+        table->entries = lua_calloc(table->capacity, sizeof(lua_table_entry));
+        if (table->entries == NULL) {
+            lua_free(old_table.entries);
+            return false;
+        }
     }
 
     for (size_t i = 0; i < old_table.capacity; i++) {
@@ -38,14 +75,15 @@ static bool table_expand(lua_table *table) {
             }
     }
 
-    lua_free(old_table.entries);
+    if (!array_expanded)
+        lua_free(old_table.entries);
 
     return true;
 }
 
 bool lua_table_add(lua_table *table, lua_object key, lua_object value) {
     if (table->size + 1 > table->capacity * MAX_LOAD_FACTOR)
-        if (!table_expand(table))
+        if (!table_rehash(table))
             return false;
 
     uint32_t hash = lua_hash_object(key);
@@ -144,6 +182,7 @@ bool lua_table_delete(lua_table *table, lua_object key) {
             return false;
 
         if (!entry->tombstone && lua_is_equal(key, entry->key)) {
+            // TODO: free deleted object
             table->size--;
             table->entries[index].tombstone = true;
             break;

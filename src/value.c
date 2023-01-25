@@ -75,34 +75,6 @@ lua_string *alloc_string(size_t len) {
     return (lua_string *) ptr;
 }
 
-bool lua_is_nil(lua_object obj) {
-    return obj.type == VALUE_TYPE_NIL;
-}
-
-bool lua_is_bool(lua_object obj) {
-    return obj.type == VALUE_TYPE_BOOL;
-}
-
-bool lua_is_number(lua_object obj) {
-    return obj.type == VALUE_TYPE_NUMBER;
-}
-
-bool lua_is_string(lua_object obj) {
-    return obj.type == VALUE_TYPE_STRING;
-}
-
-bool lua_get_bool(lua_object obj) {
-    return obj.b;
-}
-
-lua_number lua_get_number(lua_object obj) {
-    return obj.num;
-}
-
-lua_string *lua_get_string(lua_object obj) {
-    return (lua_string *) obj.gc_obj;
-}
-
 // according to lua documentation
 // false and nil are falsy values
 bool lua_is_truthy(lua_object obj) {
