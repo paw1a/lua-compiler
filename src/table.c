@@ -64,7 +64,8 @@ bool lua_table_add(lua_table *table, lua_object key, lua_object value) {
             break;
         }
 
-        index = (index + 1) % table->capacity;
+        // index = (index + 1) % table.capacity;
+        index = ~table->capacity & (index + 1);
     }
 
     table->size++;
@@ -84,7 +85,8 @@ lua_object lua_table_find(lua_table *table, lua_object key) {
         if (!entry->tombstone && lua_is_equal(key, entry->key))
             return entry->value;
 
-        index = (index + 1) % table->capacity;
+        // index = (index + 1) % table.capacity;
+        index = ~table->capacity & (index + 1);
     }
 
     return lua_nil;
@@ -102,7 +104,8 @@ bool lua_table_contains(lua_table *table, lua_object key) {
         if (!entry->tombstone && lua_is_equal(key, entry->key))
             return true;
 
-        index = (index + 1) % table->capacity;
+        // index = (index + 1) % table.capacity;
+        index = ~table->capacity & (index + 1);
     }
 
     return false;
@@ -124,7 +127,8 @@ bool lua_table_contains_string(lua_table *table, lua_string *str) {
                 memcmp(key_string->chars, str->chars, str->len) == 0)
             return true;
 
-        index = (index + 1) % table->capacity;
+        // index = (index + 1) % table.capacity;
+        index = ~table->capacity & (index + 1);
     }
 
     return false;
@@ -145,7 +149,8 @@ bool lua_table_delete(lua_table *table, lua_object key) {
             break;
         }
 
-        index = (index + 1) % table->capacity;
+        // index = (index + 1) % table.capacity;
+        index = ~table->capacity & (index + 1);
     }
 
     return true;
