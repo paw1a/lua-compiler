@@ -82,6 +82,12 @@ static bool table_rehash(lua_table *table) {
 }
 
 bool lua_table_add(lua_table *table, lua_object key, lua_object value) {
+    if (lua_is_integer(key) && key.num > 0 && key.num < table->array_capacity) {
+        table->array[(uint32_t) key.num] = value;
+        table->array_size++;
+        return true;
+    }
+
     if (table->size + 1 > table->capacity * MAX_LOAD_FACTOR)
         if (!table_rehash(table))
             return false;
@@ -112,6 +118,10 @@ bool lua_table_add(lua_table *table, lua_object key, lua_object value) {
 }
 
 lua_object lua_table_find(lua_table *table, lua_object key) {
+    if (lua_is_integer(key) && key.num > 0 && key.num < table->array_capacity) {
+        return table->array[(uint32_t) key.num];
+    }
+
     uint32_t hash = lua_hash_object(key);
     size_t index = hash % table->capacity;
 
@@ -131,6 +141,10 @@ lua_object lua_table_find(lua_table *table, lua_object key) {
 }
 
 bool lua_table_contains(lua_table *table, lua_object key) {
+    if (lua_is_integer(key) && key.num > 0 && key.num < table->array_capacity) {
+        return !lua_is_nil(table->array[(uint32_t) key.num]);
+    }
+
     uint32_t hash = lua_hash_object(key);
     size_t index = hash % table->capacity;
 
@@ -173,6 +187,12 @@ bool lua_table_contains_string(lua_table *table, lua_string *str) {
 }
 
 bool lua_table_delete(lua_table *table, lua_object key) {
+    if (lua_is_integer(key) && key.num > 0 && key.num < table->array_capacity) {
+        table->array[(uint32_t) key.num] = lua_nil;
+        table->array_size--;
+        return true;
+    }
+
     uint32_t hash = lua_hash_object(key);
     size_t index = hash % table->capacity;
 
@@ -197,4 +217,5 @@ bool lua_table_delete(lua_table *table, lua_object key) {
 
 void lua_table_free(lua_table *table) {
     lua_free(table->entries);
+    lua_free(table->array);
 }
